@@ -39,7 +39,7 @@ public class test_2{
 			File file_2 = new File("./image/test_2.bmp");
 			BufferedImage bfimage = (BufferedImage) drawView.createImage(drawView.getWidth(),drawView.getHeight());
 			
-			ImageIO.write(bfimage, "BMP", file);
+			ImageIO.write(bfimage, "BMP", file)
 			
 			//System.out.println(original.getType());
 			
