@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
+import java.io.File;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -31,18 +32,20 @@ import javax.swing.plaf.basic.BasicButtonUI;
 import beautytool.JTextFieldHintListener;
 import beautytool.MyTextFieldBorder;
 import fileoperation.OpenFile;
+import fileoperation.SaveFile;
 import graph.MyCurve;
 import graph.MyObject;
 import graph.MyShape;
 import identify.IdentifiedShape;
 import identify.ShapeIdentifier;
-import panel.SouthItemListener;
+
 
 public class DrawFunction {
 	private DrawView view;
 	private MyCurve object;
 	
-	private OpenFile openFile  = new OpenFile(this);;
+	private OpenFile openFile  = new OpenFile(this);
+	private SaveFile saveFile  = new SaveFile(this);
 	
 	private ArrayList<Shape> shapes = new ArrayList<Shape>();
 	private ArrayList<MyShape> myShapes = new ArrayList<MyShape>();
@@ -60,13 +63,17 @@ public class DrawFunction {
 	private JButton forward = null;
 	private JButton backward = null;
 	
-	private int recordBackford = 1;
+	private int recordBackford;
 	
 	private int rocordLine = 0;
 	
 	private IdentifiedShape resultOfIdentify = null;
 	
+	private String filePath = "./savefile";
+	
 	public DrawFunction(DrawView view){
+		this.recordBackford = getLastRecordBackford();
+		System.out.println("recordBackford"+recordBackford);
 		this.view = view;
 		view.addMouseListener(new MouseAdapter(){
 			@Override
@@ -123,6 +130,7 @@ public class DrawFunction {
 			}
 		});
 	}	
+	
 	/**北边*/
 	public JPanel getNorth(){
 		JPanel operation = new JPanel();
@@ -251,23 +259,61 @@ public class DrawFunction {
 		bar.add(menu_open);
 		bar.add(menu_saveAs);
 		// 给菜单添加添加监听事件
-		SouthItemListener itemListener = new SouthItemListener(this);
-		menu_new.addActionListener(itemListener);
-		menu_open.addActionListener(itemListener);
-		menu_saveAs.addActionListener(itemListener);
-		menu_save.addActionListener(itemListener);
+		menu_new.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				try {	
+					int value = JOptionPane.showConfirmDialog(null, "是否需要保存当前文件？", "提示信息", 0);
+					if (value == 0) {
+						saveFile.save(shapes,myShapes, recordBackford);
+					}
+					recordBackford = getLastRecordBackford();
+					clearAll();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});			
+		menu_open.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				try {	
+					openFile.open();
+					clearAll();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});		
+		menu_saveAs.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				saveFile.saveAsPicture();
+			}
+		});		
+		menu_save.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				saveFile.save(shapes,myShapes, recordBackford);
+			}
+		});		
 		
 		south.add(bar);
 		return south;
 	}
-	
-    
+
     /**西边*/
     public JPanel getWest() {
     	JPanel west = new JPanel();
     	forward = createBtn("", "./image/forward.png");
-    	//forward.setVerticalTextPosition(JButton.BOTTOM);
-    	//forward.setHorizontalTextPosition(JButton.CENTER);	
+    	forward.setVerticalTextPosition(JButton.BOTTOM);
+    	forward.setHorizontalTextPosition(JButton.CENTER);	
     	west.add(forward, BorderLayout.WEST);
     	
     	forward.addActionListener(new ActionListener(){
@@ -275,7 +321,8 @@ public class DrawFunction {
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				try {	
-					recordBackford++;
+					recordBackford--;
+					System.out.println("recordBackford"+recordBackford);
 					openFile.openSavefileObject(recordBackford);					
 				}catch (Exception e1) {
 					// TODO Auto-generated catch block
@@ -299,7 +346,7 @@ public class DrawFunction {
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				try {	
-					recordBackford--;
+					recordBackford++;
 					openFile.openSavefileObject(recordBackford);
 					
 				}catch (Exception e1) {
@@ -397,46 +444,7 @@ public class DrawFunction {
             e.printStackTrace();
             return new ImageIcon();
 		}
-}
-	
-	/**画画反序列化文件中的对象*/
-	/*private void paintSavefileObject(int recordBackford) {
-		FileInputStream fis = null;
-		ObjectInputStream ois = null;
-		ArrayList<Object> allshapes = new ArrayList<Object>();
-		ArrayList<MyShape> myShapes = new ArrayList<MyShape>();
-		ArrayList<Shape> shapes = new ArrayList<Shape>();
-	    try {
-	    	fis = new FileInputStream("./savefile/" + recordBackford
-	    			+ ".txt");
-	    	ois = new ObjectInputStream(fis);
-	        while (true) {
-	        	allshapes.add(ois.readObject());
-	        }
-	    } catch (FileNotFoundException e) {
-	    	JOptionPane.showMessageDialog(null, "没有更多了！");
-	        e.printStackTrace();
-	    } catch (IOException e) {
-	        e.printStackTrace(); //此处解决序列化完成后的异常
-	    } catch (ClassNotFoundException e) {
-	        e.printStackTrace();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        System.out.println("输出结束");
-	    }
-		for(int i=0 ; i<allshapes.size() ; i++) {
-			if(allshapes.get(i).getClass().getName().equals("graph.MyShape")) {
-				myShapes.add((MyShape)allshapes.get(i));
-			}
-			else {
-				shapes.add((Shape)allshapes.get(i));
-			}
-			view.setShapes(shapes);
-			view.setMyShapes(myShapes);
-			view.repaint();
-		}
-	}*/
-
+	}
 	
 	public DrawView getDrawView() {
 		return this.view;
@@ -469,5 +477,29 @@ public class DrawFunction {
 	}
 	public int getRecordBackford() {
 		return recordBackford;
+	}
+	public void setRecordBackford(int i) {
+		this.recordBackford = i;
+	}
+	
+	private void clearAll() {
+		// TODO Auto-generated method stub
+		this.setMyShapes(new ArrayList<MyShape>());
+		this.setShapes(new ArrayList<Shape>());
+		this.getDrawView().setMyShapes(new ArrayList<MyShape>());
+		this.getDrawView().setShapes(new ArrayList<Shape>());
+		this.getDrawView().repaint();
+	}
+	
+	private int getLastRecordBackford() {
+		File file = new File(filePath);   
+		// 获得该文件夹内的所有文件   
+		File[] array = file.listFiles();   
+		if(array.length == 0) {
+			return 0;
+		}
+		String name = array[array.length-1].getName();
+		String lastRecordBackford = name.substring(0, name.length()-4);
+		return Integer.valueOf(lastRecordBackford);
 	}
 }

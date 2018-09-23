@@ -22,8 +22,6 @@ public class SaveFile {
 	
 	private DrawFunction listener;
 	
-	private String filePath = "./savefile/";
-	
 	public SaveFile(DrawFunction paint) {
 		this.listener = paint;
 	}
@@ -62,10 +60,10 @@ public class SaveFile {
 	}
 	
 	/**保存正在编辑的图片*/
-	public void save(ArrayList<Shape> s,ArrayList<MyShape> ss) {
+	public void save(ArrayList<Shape> s,ArrayList<MyShape> ss, int recordBackford) {
 		// TODO Auto-generated method stub
 		
-		String filename = "./savefile/" + (getLastRecordBackford() + 1)
+		String filename = "./savefile/" + (recordBackford + 1)
 				+ ".txt";
 		ObjectOutputStream oos = null;
         try {
@@ -86,17 +84,5 @@ public class SaveFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
-	}
-	
-	private int getLastRecordBackford() {
-		File file = new File(filePath);   
-		// 获得该文件夹内的所有文件   
-		File[] array = file.listFiles();   
-		if(array.length == 0) {
-			return 0;
-		}
-		String name = array[array.length-1].getName();
-		String lastRecordBackford = name.substring(0, name.length()-4);
-		return Integer.valueOf(lastRecordBackford);
 	}
 }

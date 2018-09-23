@@ -21,9 +21,7 @@ import panel.DrawFunction;
 
 public class OpenFile {
 	private DrawFunction listener;
-	private SaveFile saveFile;
-	
-	private String filePath = "./savefile/";
+	private SaveFile saveFile = new SaveFile(listener);
 
 	public OpenFile(DrawFunction paint) {
 		this.listener = paint;
@@ -34,7 +32,7 @@ public class OpenFile {
 		// TODO Auto-generated method stub
 		int value = JOptionPane.showConfirmDialog(null, "是否需要保存当前文件？", "提示信息", 0);
 		if (value == 0) {
-			saveFile.save(this.listener.getShapes(), this.listener.getMyShapes());
+			saveFile.save(this.listener.getShapes(), this.listener.getMyShapes(), this.listener.getRecordBackford());
 		}
 		try {
 			// 弹出选择对话框，选择需要读入的文件

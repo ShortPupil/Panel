@@ -20,10 +20,6 @@ public class DrawView extends JPanel{
 	private MyCurve curve ;
 	private ArrayList<MyShape> myShapes = new ArrayList<MyShape>();
 	private ArrayList<Shape> shapes = new ArrayList<Shape>();
-	/*public void setShapes(ArrayList<Shape> shapes) {
-		this.shapes = shapes;
-		repaint();
-	}*/
 
 	public void setMyShapes(ArrayList<MyShape> myShapes){
 		this.myShapes = myShapes;
@@ -69,7 +65,6 @@ public class DrawView extends JPanel{
 	public ArrayList<MyShape> getMyShapes() {
 		return myShapes;
 	}
-
 
 	public ArrayList<Shape> getShapes() {
 		return shapes;
