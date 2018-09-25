@@ -14,8 +14,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import drawpanel.DrawFunction;
 import graph.MyShape;
-import panel.DrawFunction;
 
 /*文件操作分离出来，方便管理*/
 

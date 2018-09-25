@@ -1,4 +1,4 @@
-package panel;
+package drawpanel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -33,10 +33,10 @@ import beautytool.JTextFieldHintListener;
 import beautytool.MyTextFieldBorder;
 import fileoperation.OpenFile;
 import fileoperation.SaveFile;
+import graph.IdentifiedShape;
 import graph.MyCurve;
 import graph.MyObject;
 import graph.MyShape;
-import identify.IdentifiedShape;
 import identify.ShapeIdentifier;
 
 
@@ -86,7 +86,6 @@ public class DrawFunction {
 					shapes.add(object.getShape());
 					System.out.println(shapes.size());
 					identifyShape.add(object.getShape());
-					
 					myShape.setShapes(identifyShape);
 					view.setShapes(shapes);
 					view.repaint();
@@ -282,7 +281,6 @@ public class DrawFunction {
 				// TODO Auto-generated method stub
 				try {	
 					openFile.open();
-					clearAll();
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -499,6 +497,7 @@ public class DrawFunction {
 			return 0;
 		}
 		String name = array[array.length-1].getName();
+		System.out.println("last" + name);
 		String lastRecordBackford = name.substring(0, name.length()-4);
 		return Integer.valueOf(lastRecordBackford);
 	}

@@ -15,8 +15,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import drawpanel.DrawFunction;
 import graph.MyShape;
-import panel.DrawFunction;
 
 public class SaveFile {
 	

@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Shape;
 import java.io.Serializable;
 import java.util.ArrayList;
-import identify.IdentifiedShape;
 
 public class MyShape implements Serializable {
 
@@ -29,16 +28,23 @@ public class MyShape implements Serializable {
 	
 	public void setIsIdentify(String identify) {
 		this.identify = identify;
-		if(identify.equals(IdentifiedShape.Triangle.toString()))
+
+		if(identify.equals(IdentifiedShape.Line.toString()))
 			color = Color.blue;
 		else if(identify.equals(IdentifiedShape.Round.toString()))
-			color = Color.PINK;
+			color = Color.pink;
+		else if(identify.equals(IdentifiedShape.Angle.toString()))
+			color = Color.orange;
+		else if(identify.equals(IdentifiedShape.Triangle.toString()))
+			color = Color.magenta;
 		else if(identify.equals(IdentifiedShape.Rectangle.toString()))
-			color = Color.DARK_GRAY;
+			color = Color.darkGray;
 		else if(identify.equals(IdentifiedShape.Square.toString()))
 			color = Color.green;
+		else if(identify.equals(IdentifiedShape.Pentagon.toString()))
+			color = Color.BLACK;
 		else if(identify.equals(IdentifiedShape.Unidentify.toString()))
-			color = Color.orange;
+			color = Color.yellow;
 	}
 	
 	public String getTag() {

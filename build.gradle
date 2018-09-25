@@ -9,12 +9,18 @@
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
 
-// In this section you declare where to find the dependencies of your project
+group = 'mypanel'
+version = '1.0.0'
+//mainClassName = 'mypanel.MainFrame'
+sourceCompatibility = 1.8
+
 repositories {
-    // Use jcenter for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
+    mavenLocal()
     jcenter()
+    mavenCentral()
 }
+
+
 
 dependencies {
     // This dependency is exported to consumers, that is to say found on their compile classpath.
@@ -25,5 +31,18 @@ dependencies {
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
+    
+    compile files('beautyeye_lnf.jar')
+
+}
+    
+jar { 
+    	from { //添加依懒到打包文件 
+    		//configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } 
+    		configurations.runtime.collect{zipTree(it)} 
+    	} 
+    	 manifest {
+        attributes 'Main-Class': 'mypanel.MainFrame'
+    }
 }
 

@@ -2,11 +2,9 @@ package main;
 
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
-import javax.swing.UIManager;
 
-import identify.ShapeIdentifier;
-import panel.DrawFunction;
-import panel.DrawView;
+import drawpanel.DrawFunction;
+import drawpanel.DrawView;
 
 public class MainFrame extends JFrame{
 	/**

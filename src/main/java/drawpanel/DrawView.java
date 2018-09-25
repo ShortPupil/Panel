@@ -1,5 +1,6 @@
-package panel;
+package drawpanel;
 
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -50,14 +51,16 @@ public class DrawView extends JPanel{
 				System.out.println("shape size "+size);
 				for(int j=0 ; j<size ; j++) {
 					g2.draw(myShape.getShapes().get(j));
-					if(myShape.getIsIdentify()!=null)
-						g2.drawString(myShape.getIsIdentify(), 
-							(int)myShape.getShapes().get(size-1).getBounds2D().getX(), 
-							(int)myShape.getShapes().get(size-1).getBounds2D().getX());
-						System.out.println(myShape.getShapes().get(size-1).getBounds2D().getX()+ 
-							 " " + myShape.getShapes().get(size-1).getBounds2D().getX());
+						//System.out.println(myShape.getShapes().get(size-1).getBounds2D().getX()+ 
+						//	 " " + myShape.getShapes().get(size-1).getBounds2D().getX());
 				}
-			}
+			g2.setFont(new Font("宋体",Font.BOLD,20));
+			g2.drawString(myShape.getIsIdentify() + "[" + 
+					myShape.getTag() + "]", 
+				(int)myShape.getShapes().get(size-1).getBounds2D().getCenterX(), 
+				(int)myShape.getShapes().get(size-1).getBounds2D().getCenterY());
+		}
+		
 		if(curve != null)
 			curve.draw(g2);
 	}

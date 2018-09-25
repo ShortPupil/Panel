@@ -4,84 +4,72 @@ package identify;
 import java.awt.Shape;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.math3.distribution.NormalDistribution;
-import org.apache.commons.math3.stat.descriptive.moment.Mean;
-import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
-
-import graph.MyCurve;
+import graph.IdentifiedShape;
 
 /**
- * 图形识别类
+ * 图形识别
+ * 要求绘图者沿着同一时针画图，可连续，可不连续
  */
 public class ShapeIdentifier {
-	private final static int pointToJudgeRound = 20;
-	
-	private final static int pointOfLine = 15;
-	private final static double Difference = 5.0;
-	private final static double minOfRightAngle = 80.0;
-	private final static double maxOfRightAngle = 100.0;
-	private final static double minOfParallel = 10.0;
-	private final static double maxOfParallel = 170.0;
 	
 	private ArrayList<Shape> shapes;
 	
-	private int numOfLine = 0;
-	private int judgeTriangle = 1;
-	private int judgeRectangle = 2;
+	private final static int judgeLineByPoint = 0;
+	private final static int judgeAngleByPoint = 1;
+	private final static int judgeTriangleByPoint = 2;
+	private final static int judgeRectangleByPoint = 3;
+	private final static int judgePentagonByPoint = 4;
+	
+	private final static int judgeLineByRecordLine = 1;
+	private final static int judgeAngleByRecordLine = 2;
+	private final static int judgeTriangleByRecordLine = 3;
+	private final static int judgeRectangleByRecordLine = 4;
+	private final static int judgePentagonByRecordLine = 5;
 	
 	public ShapeIdentifier(ArrayList<Shape> shapes2) {
 		this.shapes = shapes2;
 		System.out.println(shapes2.size());
 	}
 	
+	
+	/**结合边数和曲率判断形状*/
 	public IdentifiedShape identify(int rocordLine) throws IOException {	
 		//TreeMap<Double, ArrayList<Double>> collection = conform(shapes, rocordLine);
-		if(rocordLine == 3) {
+		if(rocordLine == judgeLineByRecordLine 
+				&& findProtrudingPoints() == judgeLineByPoint) {
+			return IdentifiedShape.Line;
+		}
+		if(rocordLine == judgeLineByRecordLine) {
+			return IdentifiedShape.Round;
+		}		
+		if(rocordLine == judgeAngleByRecordLine 
+				|| findProtrudingPoints() == judgeAngleByPoint) {
+			return IdentifiedShape.Angle;
+		}
+		if(rocordLine == judgeTriangleByRecordLine 
+				|| findProtrudingPoints() == judgeTriangleByPoint) {
 			return IdentifiedShape.Triangle;
 		}
-		if(rocordLine == 4) {
+		if(rocordLine == judgeRectangleByRecordLine 
+				|| findProtrudingPoints() == judgeRectangleByPoint) {
 			return IdentifiedShape.Rectangle;
 		}
-		if(rocordLine == 1) {
-			return IdentifiedShape.Round;
+		if(rocordLine == judgePentagonByRecordLine 
+				|| findProtrudingPoints() == judgePentagonByPoint) {
+			return IdentifiedShape.Pentagon;
 		}
 		//findProtrudingPoint();
 		
 	    return IdentifiedShape.Unidentify;
 	}
 	
-	
-	/**对shapes数组处理，以便对坐标的扫描
-	 * return TreeMap 处理结果，同横坐标的放在一起*/
-	private TreeMap<Double, ArrayList<Double>> conform(ArrayList<Shape> s) {
-		TreeMap<Double, ArrayList<Double>> collection = new TreeMap<Double, ArrayList<Double>>();
-		for(int i=0 ; i<s.size() ; i++) {
-			double point_x = s.get(i).getBounds2D().getX();
-			double point_y = s.get(i).getBounds2D().getY();
-			if(collection.keySet().contains(point_x)) {
-				ArrayList<Double> ys = collection.get(point_x);
-				ys.add(point_y);
-				collection.put(point_x, ys);
-			}else {
-				ArrayList<Double> newYs = new ArrayList<Double>();
-				newYs.add(point_y);
-				collection.put(point_x, newYs);
-			}
-		}
-		return collection;
-	}
-	
-	/**判断是否为圆*/
-	private ArrayList<Shape> findProtrudingPoint() {
+	/**通过曲率寻找曲率峰值,以确定曲点数量*/
+	private int findProtrudingPoints() {
 		TreeMap<Integer, Double> curvature = new TreeMap<Integer, Double>();
 		
-		Mean mean = new Mean(); // 算术平均值  
-        ArrayList<Double> s = new ArrayList<Double>();
-        double res[] = new double[pointToJudgeRound];
 		for(int i=0 ; i<shapes.size()-7 ; i+=5) {
 			
 			double k_1 = 0.0;
@@ -97,10 +85,9 @@ public class ShapeIdentifier {
 			double y_3 = shapes.get(i+2).getBounds2D().getY();
 			double y_4 = shapes.get(i+3).getBounds2D().getY();
 			
-			double d_i = Math.atan((y_3-y_1)/(x_3-x_1));
-			
 			double distance = Math.sqrt(Math.pow(x_1-x_3, 2)+Math.pow(y_1-y_3, 2));
 			
+			//计算斜率为0的情况
 			if(x_1 == x_2 && x_3 == x_4) 
 				curvature.put(i, 0.0);
 			else if(x_1 == x_2) {
@@ -128,12 +115,13 @@ public class ShapeIdentifier {
 		}
 		System.out.println(count);
 		
-		 ArrayList<Integer> peak = new ArrayList<Integer>();
+		ArrayList<Integer> peak = new ArrayList<Integer>();
 	     for (int index = 1; index <= arr.length - 2; ) {
-	         //判断是否峰点
-	         if (arr[index] > arr[index - 1] && arr[index] > arr[index + 1]&&arr[index]>40) {
+	         //判断是否峰点,而且峰点周围差距要大于该点的0.2
+	         if ((arr[index] - arr[index - 1]>0.2*arr[index- 1] )
+	        		 && (arr[index] - arr[index + 1] > 0.2*arr[index+1]) ) {
 	             peak.add(index);
-	             index += 2;
+	             index += 3; //此为 曲点之间存在3～5个非曲点
 	         } else {
 	             index += 1;
 	         }
@@ -146,8 +134,8 @@ public class ShapeIdentifier {
 	         x++;
 	     }
 	     System.out.println("峰值是 "+output);
-	    System.out.println("个数是 " + x);
-	     return shapes;
+	     System.out.println("个数是 " + x);
+	     return x;
 	}
  
 }
