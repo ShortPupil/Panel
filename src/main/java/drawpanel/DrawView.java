@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import graph.MyCurve;
 import graph.MyShape;
 
+/**画图界面*/
 public class DrawView extends JPanel{
 	/**
 	 * 

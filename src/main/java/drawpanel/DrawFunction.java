@@ -39,28 +39,39 @@ import graph.MyObject;
 import graph.MyShape;
 import identify.ShapeIdentifier;
 
-
+/**画图功能实现*/
 public class DrawFunction {
 	private DrawView view;
 	private MyCurve object;
 	
 	private OpenFile openFile  = new OpenFile(this);
 	private SaveFile saveFile  = new SaveFile(this);
-	
+	/**点shape*/
 	private ArrayList<Shape> shapes = new ArrayList<Shape>();
+	/**自构建的myshape*/
 	private ArrayList<MyShape> myShapes = new ArrayList<MyShape>();
+	/**myobject 特指mycurve*/
 	private ArrayList<MyObject> objects = new ArrayList<MyObject>();
+	/**已被识别的shape*/
 	private ArrayList<Shape> identifyShape = new ArrayList<Shape>();
 	private MyShape myShape = new MyShape(shapes);
 	
+	/***/
 	private JTextField tagText = null;
+	/***/
 	private JButton tagBtn = null;
+	/***/
 	private JButton identifyBtn = null;
+	/***/
 	private JButton backBtn = null;
+	/***/
 	private JTextField shapeText = null;
+	/**警告信息*/
 	private JLabel warnInfo = null;
 	
+	/**打开前一张图片 按钮*/
 	private JButton forward = null;
+	/**打开后一张图片 按钮*/
 	private JButton backward = null;
 	
 	private int recordBackford;
@@ -75,6 +86,7 @@ public class DrawFunction {
 		this.recordBackford = getLastRecordBackford();
 		System.out.println("recordBackford"+recordBackford);
 		this.view = view;
+		
 		view.addMouseListener(new MouseAdapter(){
 			@Override
 			public void mousePressed(MouseEvent arg0) {

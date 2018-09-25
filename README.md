@@ -26,7 +26,7 @@
 
 曲点由**曲率的峰值**决定
 
-![](/home/songzi/图片/截图/曲率.png)
+![](/home/songzi/文档/my_github/Panel/image/曲率.png)
 
 
 

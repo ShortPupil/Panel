@@ -4,6 +4,7 @@ package identify;
 import java.awt.Shape;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -34,10 +35,10 @@ public class ShapeIdentifier {
 		System.out.println(shapes2.size());
 	}
 	
-	
 	/**结合边数和曲率判断形状*/
 	public IdentifiedShape identify(int rocordLine) throws IOException {	
 		//TreeMap<Double, ArrayList<Double>> collection = conform(shapes, rocordLine);
+		//int protrudingPoints = findProtrudingPoints().size();
 		if(rocordLine == judgeLineByRecordLine 
 				&& findProtrudingPoints() == judgeLineByPoint) {
 			return IdentifiedShape.Line;
@@ -55,15 +56,41 @@ public class ShapeIdentifier {
 		}
 		if(rocordLine == judgeRectangleByRecordLine 
 				|| findProtrudingPoints() == judgeRectangleByPoint) {
-			return IdentifiedShape.Rectangle;
+			return isRectangleOrSquare();
 		}
 		if(rocordLine == judgePentagonByRecordLine 
 				|| findProtrudingPoints() == judgePentagonByPoint) {
 			return IdentifiedShape.Pentagon;
 		}
 		//findProtrudingPoint();
-		
 	    return IdentifiedShape.Unidentify;
+	}
+	
+	
+	/**判断矩形与正方形的方法
+	 * 正方形边长比在0.9～1.1*/
+	private IdentifiedShape isRectangleOrSquare() {
+		double []  xs = new double[shapes.size()];
+		double []  ys = new double[shapes.size()];
+		for(int i=1 ; i<shapes.size() ; i++) {
+			if(shapes.get(i).getBounds2D().getCenterX() != 0 
+					|| shapes.get(i).getBounds2D().getCenterY() != 0)
+				xs[i] = shapes.get(i).getBounds2D().getCenterX();
+				ys[i] = shapes.get(i).getBounds2D().getCenterY();
+				//System.out.println(xs[i] + " " + ys[i]);
+		}
+		Arrays.sort(xs); Arrays.sort(ys);
+		for(int i=0 ; i<xs.length ; i++) {
+			System.out.println(xs[i] + " " + ys[i]);
+		}
+		double x_maxDValue = xs[xs.length-1]-xs[1];
+		double y_maxDValue = ys[ys.length-1]-ys[1];
+		
+		System.out.println(x_maxDValue +  " " + y_maxDValue);
+		if((x_maxDValue >= 0.9*y_maxDValue) && (x_maxDValue <= 1.1*y_maxDValue)) {
+			return IdentifiedShape.Square;
+		}
+		return IdentifiedShape.Rectangle;
 	}
 	
 	/**通过曲率寻找曲率峰值,以确定曲点数量*/
@@ -87,7 +114,7 @@ public class ShapeIdentifier {
 			
 			double distance = Math.sqrt(Math.pow(x_1-x_3, 2)+Math.pow(y_1-y_3, 2));
 			
-			//计算斜率为0的情况
+			//计算斜率为0的情况，防止除0错误
 			if(x_1 == x_2 && x_3 == x_4) 
 				curvature.put(i, 0.0);
 			else if(x_1 == x_2) {
