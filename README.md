@@ -2,6 +2,10 @@
 
 [TOC]
 
+## 运行
+
+解压，在Eclipse里打开，右键main.MainFrame运行即可
+
 
 
 ## 分包

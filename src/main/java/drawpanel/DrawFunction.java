@@ -16,7 +16,10 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -56,15 +59,15 @@ public class DrawFunction {
 	private ArrayList<Shape> identifyShape = new ArrayList<Shape>();
 	private MyShape myShape = new MyShape(shapes);
 	
-	/***/
+	/**标注文本框*/
 	private JTextField tagText = null;
-	/***/
+	/**标注确认按钮*/
 	private JButton tagBtn = null;
-	/***/
+	/**识别按钮*/
 	private JButton identifyBtn = null;
-	/***/
+	/**撤回按钮，只允许撤回标注了的内容*/
 	private JButton backBtn = null;
-	/***/
+	/**识别的形状文本框*/
 	private JTextField shapeText = null;
 	/**警告信息*/
 	private JLabel warnInfo = null;
@@ -279,7 +282,7 @@ public class DrawFunction {
 					if (value == 0) {
 						saveFile.save(shapes,myShapes, recordBackford);
 					}
-					recordBackford = getLastRecordBackford();
+					recordBackford = getLastRecordBackford()+1;
 					clearAll();
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
@@ -336,6 +339,7 @@ public class DrawFunction {
 					openFile.openSavefileObject(recordBackford);					
 				}catch (Exception e1) {
 					// TODO Auto-generated catch block
+					recordBackford = 1;
 					e1.printStackTrace();
 				}
 			}
@@ -361,6 +365,7 @@ public class DrawFunction {
 					
 				}catch (Exception e1) {
 					// TODO Auto-generated catch block
+					recordBackford = getLastRecordBackford();
 					e1.printStackTrace();
 				}
 			}
@@ -504,13 +509,20 @@ public class DrawFunction {
 	private int getLastRecordBackford() {
 		File file = new File(filePath);   
 		// 获得该文件夹内的所有文件   
-		File[] array = file.listFiles();   
-		if(array.length == 0) {
-			return 0;
+		File[] array = file.listFiles();  
+		int [] names = new int[array.length];
+		for(int i=0 ; i<array.length ; i++) {
+			String name = array[i].getName();
+			System.out.println("last" + name);
+			String lastRecordBackford = name.substring(0, name.length()-4);
+			int x = Integer.valueOf(lastRecordBackford);
+			names[i] = x;
+			System.out.println(x);
 		}
-		String name = array[array.length-1].getName();
-		System.out.println("last" + name);
-		String lastRecordBackford = name.substring(0, name.length()-4);
-		return Integer.valueOf(lastRecordBackford);
+		Arrays.sort(names);
+
+			//System.out.println(names[names.length-1]);
+
+		return names[names.length-1];
 	}
 }

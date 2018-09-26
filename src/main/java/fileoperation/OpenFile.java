@@ -3,6 +3,7 @@ package fileoperation;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -71,7 +72,12 @@ public class OpenFile {
 	        while (true) {
 	        	allshapes.add(ois.readObject());
 	        }
-	    } catch (FileNotFoundException e) {
+	    } 
+	    catch(EOFException e) {
+	    	//每次读取都会出现的异常错误，由于读文件到最终end了，没有关系
+	    	e.printStackTrace();
+	    }
+	    catch (FileNotFoundException e) {
 	    	JOptionPane.showMessageDialog(null, "没有更多了！");
 	        e.printStackTrace();
 	    } catch (IOException e) {

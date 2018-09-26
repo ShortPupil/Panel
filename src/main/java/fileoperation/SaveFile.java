@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -52,7 +53,10 @@ public class SaveFile {
        
 				ImageIO.write(image, "jpg", file);
 				JOptionPane.showMessageDialog(null, "保存成功！");
-			} catch (IOException e) {
+			}catch(FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -63,7 +67,7 @@ public class SaveFile {
 	public void save(ArrayList<Shape> s,ArrayList<MyShape> ss, int recordBackford) {
 		// TODO Auto-generated method stub
 		
-		String filename = "./savefile/" + (recordBackford + 1)
+		String filename = "./savefile/" + (recordBackford+1)
 				+ ".txt";
 		ObjectOutputStream oos = null;
         try {
